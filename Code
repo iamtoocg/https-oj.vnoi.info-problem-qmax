@@ -1,0 +1,68 @@
+#pragma GCC optimization("Ofast")
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define time cout<<"\n"<<(double)clock()/CLOCKS_PER_SEC<<" ms"
+#define f first
+#define s second
+#define p pair<int,int>
+#define fast ios_base::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+const int MAXn=1e5;
+int n,m,q;
+ll a[MAXn];
+struct node{
+ ll val,lazy;
+};
+node tree[MAXn*4];
+void luoi(int l,int r,int id){
+  ll temp=tree[id].lazy;
+  tree[id*2].lazy+=temp;
+  tree[id*2].val+=temp;
+  tree[id*2+1].lazy+=temp;
+  tree[id*2+1].val+=temp;
+  tree[id].lazy=0;
+}
+void upd(int l,int r,int id,int u,int v,int k){
+    if(l>v||r<u) return;
+    if(l>=u&&r<=v){
+        tree[id].val+=k;
+        tree[id].lazy+=k;
+
+        return;
+    }
+    luoi(l,r,id);
+    int mid=l+r>>1;
+    upd(l,mid,id*2,u,v,k);
+    upd(mid+1,r,id*2+1,u,v,k);
+    tree[id].val=max(tree[id*2].val,tree[id*2+1].val);
+}
+ll get(int l,int r,int id,int u,int v){
+
+    if(l>v||r<u) return 0;
+    if(l>=u&&r<=v){
+         ;
+        return tree[id].val;
+    }
+    luoi(l,r,id);
+    int mid=l+r>>1;
+    ll get1=get(l,mid,id*2,u,v);
+    ll get2=get(mid+1,r,id*2+1,u,v);
+    return max(get1,get2);
+}
+ int main()
+{
+    fast;
+    cin >> n >> m;
+    while(m--){
+        int u,v,k;
+        cin >> u>> v >> k;
+        upd(1,n,1,u,v,k);
+    }
+    cin >> q;
+    while(q--){
+        int u,v;
+        cin >> u >> v;
+        cout << get(1,n,1,u,v) << "\n";
+    }
+
+}
